@@ -33,7 +33,7 @@ module.exports = {
                 .setTitle("Canciones en cola: ")
                 .setDescription(description);
 
-            return await interaction.reply({embeds: [embed]});
+            return await interaction.reply({embeds: [embed], ethereal: true});
 		} else {
             const embed = new MessageEmbed()
                 .setColor("29d1ea")

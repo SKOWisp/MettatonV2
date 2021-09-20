@@ -212,12 +212,22 @@ var ServerQueue = /** @class */ (function () {
                         return [4 /*yield*/, utils.getSong(nextTrack.title)];
                     case 1:
                         info = _a.sent();
-                        nextTrack.title = info.title;
-                        nextTrack.author = info.author.name;
-                        nextTrack.authorUrl = info.author.url;
-                        nextTrack.avatar = info.author.bestAvatar.url;
-                        nextTrack.thumbnail = info.bestThumbnail.url;
-                        nextTrack.url = info.url;
+                        // In case info is null, go to next track.
+                        try { // Attempt to read data from info
+                            nextTrack.title = info.title;
+                            nextTrack.author = info.author.name;
+                            nextTrack.authorUrl = info.author.url;
+                            nextTrack.avatar = info.author.bestAvatar.url;
+                            nextTrack.thumbnail = info.bestThumbnail.url;
+                            nextTrack.url = info.url;
+                        }
+                        catch (err) {
+                            console.log(err);
+                            // If an error occurred, try the next item of the queue instead
+                            nextTrack.onError(err);
+                            this.queueLock = false;
+                            return [2 /*return*/, this.processQueue()];
+                        }
                         _a.label = 2;
                     case 2:
                         _a.trys.push([2, 4, , 5]);

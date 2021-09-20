@@ -144,12 +144,22 @@ export class ServerQueue{
         // Take the first item from the queue. This is guaranteed to exist due to the non-empty check above.
 		const nextTrack = this.queue.shift()!; // ! significa que no puede ser null
 		let info:any = await utils.getSong(nextTrack.title);
+		// In case info is null, go to next track.
+
+		try { // Attempt to read data from info
 		nextTrack.title = info.title;
 		nextTrack.author = info.author.name;
 		nextTrack.authorUrl = info.author.url;
 		nextTrack.avatar = info.author.bestAvatar.url;
 		nextTrack.thumbnail = info.bestThumbnail.url;
 		nextTrack.url = info.url;
+		} catch (err) {
+			console.log(err);
+			// If an error occurred, try the next item of the queue instead
+			nextTrack.onError(err as Error);
+			this.queueLock = false;
+			return this.processQueue();
+		}
 
         try {
 			// Attempt to convert the Track into an AudioResource (i.e. start streaming the video)

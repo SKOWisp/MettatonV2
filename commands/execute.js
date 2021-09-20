@@ -101,7 +101,7 @@ function createTrackArray(tracks, interaction){
             },
             onError(error) {
                 console.warn(error);
-                interaction.followUp({ content: `Error: ${error.message}`, ephemeral: true }).catch(console.warn);
+                interaction.channel.send({ content: `Error: ${error.message}`, ephemeral: true }).catch(console.warn);
             }
         })
         newArray.push(track);
