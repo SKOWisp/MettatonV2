@@ -27,7 +27,11 @@ const rest = new REST({ version: '9' }).setToken(process.env.BOT_TOKEN);
             // Deploys global commands if application has applications.commands scope authorized.
             Routes.applicationCommands(clientId),
             { body: commands },
-		);
+			);
+
+			//Routes.applicationGuildCommands(clientId, guildId),
+			//{ body: commands },);
+
 
 		console.log('Successfully registered application commands.');
 	}

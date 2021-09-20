@@ -1,11 +1,11 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 
+
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('ping')
-		.setDescription('Replies with Pong!'),
+		.setDescription('Muestra el ping del bot,'),
 	async execute(interaction) {
-        console.log(interaction);
-		await interaction.reply('Pong!');
+		interaction.reply(`Websocket heartbeat: ${interaction.client.ws.ping}ms.`);
 	},
 };
