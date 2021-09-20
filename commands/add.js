@@ -53,7 +53,7 @@ function createTrack(string, interaction){
 	const track = Track.from(string,{
 		onStart(song) {
 			const embed = embeds.songsPlay(song);
-			interaction.editReply({embeds: [embed], ephemeral: false}).catch(console.warn);
+			interaction.channel.send({embeds: [embed]}).catch(console.warn);
 		},
 		onFinish(){
 			//Delete original message after song ends to keep text channel clean.

@@ -19,7 +19,7 @@ module.exports = {
 				Destroying connection
 			*/
 			serverQueue.voiceConnection.destroy();
-            serverQueue.delete(interaction.guildId);
+            interaction.client.queue.delete(interaction.guildId);
             const embed = embeds.generic('¡Nos vemos!')
             return await interaction.reply({embeds: [embed]});
                 
