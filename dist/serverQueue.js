@@ -56,7 +56,7 @@ var safeSong_1 = require("./safeSong");
 (0, dotenv_1.config)();
 var wait = (0, util_1.promisify)(setTimeout);
 var ServerQueue = /** @class */ (function () {
-    function ServerQueue(voiceConnection) {
+    function ServerQueue(voiceConnection, textChannel) {
         var _this = this;
         this.timeoutID = null;
         this.onCountDown = false;
@@ -64,6 +64,7 @@ var ServerQueue = /** @class */ (function () {
         this.readyLock = false;
         this.queueLock = false;
         this.voiceConnection = voiceConnection;
+        this.textChannel = textChannel;
         this.audioPlayer = (0, voice_1.createAudioPlayer)();
         this.queue = [];
         //Manages reconnection after a disconnect
@@ -196,7 +197,7 @@ var ServerQueue = /** @class */ (function () {
                         info = _a.sent();
                         // If getting info fails, try next song
                         if (info === null) {
-                            console.log("ytsr no pudo encontrat " + nextTrack.title);
+                            console.log("ytsr no pudo encontrar " + nextTrack.title);
                             this.queueLock = false;
                             return [2 /*return*/, this.processQueue()];
                         }

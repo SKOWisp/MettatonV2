@@ -6,7 +6,8 @@ module.exports = {
 		.setName('queue')
 		.setDescription('Muestra la cola... :O'),
 	async execute(interaction) {
-		let serverQueue = interaction.client.queue.get(interaction.guildId);
+        const { QUEUE } = require('../index.js');
+		let serverQueue = QUEUE.get(interaction.guildId);
 		if (serverQueue){
 			//Check that user is GuildMember
 			if(!interaction.member instanceof GuildMember){

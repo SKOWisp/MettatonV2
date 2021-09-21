@@ -7,7 +7,8 @@ module.exports = {
 		.setName('leave')
 		.setDescription('Finaliza la conexión'),
 	async execute(interaction) {
-		let serverQueue = interaction.client.queue.get(interaction.guildId);
+		const { QUEUE } = require('../index')
+		let serverQueue = QUEUE.get(interaction.guildId);
 		if (serverQueue){
 			//Check that user is GuildMember and is connected to same vc as bot.
 			if(
@@ -20,7 +21,7 @@ module.exports = {
 			*/
 			console.log('Running command /leave')
 			serverQueue.voiceConnection.destroy();
-            interaction.client.queue.delete(interaction.guildId);
+            QUEUE.delete(interaction.guildId);
             const embed = embeds.generic('¡Nos vemos!')
             return await interaction.reply({embeds: [embed]});
                 

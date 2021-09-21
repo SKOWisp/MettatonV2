@@ -11,7 +11,8 @@ module.exports = {
                 .setDescription('El # de canción a saltar.')
                 .setRequired(false)),
 	async execute(interaction) {
-		let serverQueue = interaction.client.queue.get(interaction.guildId);
+		const { QUEUE } = require('../index');
+		let serverQueue = QUEUE.get(interaction.guildId);
 		if (serverQueue){
 			//Check that user is GuildMember and is connected to same vc as bot.
 			if(

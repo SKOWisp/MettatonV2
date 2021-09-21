@@ -6,11 +6,12 @@ const {
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { handleUrls } = require('../utils/url-handler.js');
 const embeds = require('../utils/embeds.js');
-const { GuildMember} = require('discord.js');
+const { GuildMember } = require('discord.js');
 const { Track, ServerQueue } = require('../dist/serverQueue');
-const { clientId } = require('../config.json');
-const fetchP = import('node-fetch').then(mod => mod.default);
-const fetch = (...args) => fetchP.then(fn => fn(...args));
+// const { clientId } = require('../config.json');
+// const fetchP = import('node-fetch').then(mod => mod.default);
+// const fetch = (...args) => fetchP.then(fn => fn(...args));
+// const {QUEUE} = require('../index')
 
 
 module.exports = {
@@ -29,7 +30,8 @@ module.exports = {
             return await interaction.followUp({embeds: [embed], ephemeral: true});
         }
 
-        let serverQueue = interaction.client.queue.get(interaction.guildId);
+        const { QUEUE } = require('../index.js');
+        let serverQueue = QUEUE.get(interaction.guildId);
 
         let query = interaction.options.getString('canción');
         query.trim();
@@ -57,10 +59,11 @@ module.exports = {
                 adapterCreator: channel.guild.voiceAdapterCreator,
                 selfDeaf: true
             }),
+            interaction.channel,
         );
 
         serverQueue.voiceConnection.on('error', console.warn);
-        interaction.client.queue.set(interaction.guildId,serverQueue);
+        QUEUE.set(interaction.guildId,serverQueue);
 
         // Make sure the connection is ready before processing the user's request
 		try {

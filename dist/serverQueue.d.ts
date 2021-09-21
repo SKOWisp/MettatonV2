@@ -1,15 +1,17 @@
 import { AudioPlayer, AudioResource, VoiceConnection } from '@discordjs/voice';
+import { TextBasedChannels } from 'discord.js';
 export declare class ServerQueue {
     readonly voiceConnection: VoiceConnection;
+    readonly textChannel: TextBasedChannels;
     readonly audioPlayer: AudioPlayer;
-    readonly timeoutID: null;
-    readonly onCountDown = false;
+    readonly timeoutID: any;
+    readonly onCountDown: any;
     queue: Track[];
     currentSong: SongData | undefined;
     prevMembers: null;
     readyLock: boolean;
     queueLock: boolean;
-    constructor(voiceConnection: VoiceConnection);
+    constructor(voiceConnection: VoiceConnection, textChannel: TextBasedChannels);
     enqueue(tracks: Track[]): void;
     stop(): void;
     private processQueue;

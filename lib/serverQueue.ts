@@ -14,6 +14,7 @@ import { promisify } from 'util';
 import { raw as ytdl } from 'youtube-dl-exec';
 import { config } from 'dotenv';
 import { safeSong } from './safeSong';
+import { TextBasedChannels } from 'discord.js';
 
 config();
 const wait = promisify(setTimeout);
@@ -21,9 +22,10 @@ const wait = promisify(setTimeout);
 
 export class ServerQueue{
     public readonly voiceConnection: VoiceConnection;
+	public readonly textChannel: TextBasedChannels;
     public readonly audioPlayer: AudioPlayer;
-    public readonly timeoutID = null;
-    public readonly onCountDown = false;
+    public readonly timeoutID:any = null;
+    public readonly onCountDown:any = false;
 
     public queue: Track[];
 	public currentSong: SongData | undefined;
@@ -33,8 +35,9 @@ export class ServerQueue{
     public readyLock = false;
     public queueLock = false;
 
-    public constructor(voiceConnection: VoiceConnection){
+    public constructor(voiceConnection: VoiceConnection, textChannel: TextBasedChannels){
         this.voiceConnection = voiceConnection;
+		this.textChannel = textChannel;
         this.audioPlayer = createAudioPlayer();
         this.queue = [];
 
@@ -149,7 +152,7 @@ export class ServerQueue{
 		let info = await safeSong(nextTrack.title);
 		// If getting info fails, try next song
 		if (info === null) {
-			console.log( `ytsr no pudo encontrat ${nextTrack.title}`)
+			console.log( `ytsr no pudo encontrar ${nextTrack.title}`)
 			this.queueLock = false;
 			return this.processQueue();
 		}

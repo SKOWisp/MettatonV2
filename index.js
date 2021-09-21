@@ -1,7 +1,6 @@
 const fs = require('fs'); 
 const { Client, Collection, Intents } = require('discord.js');
 require('dotenv').config();
-const { STATUS } = require('./config.json');
 
 // Create a new client instance
 const client = new Client({ 
@@ -31,7 +30,11 @@ for (const file of eventFiles) {
 	}
 }
 
-client.queue = new Map();
+var my_QUEUE = new Map();
 
 // Login to Discord with client's token.
 client.login(process.env.BOT_TOKEN);
+
+module.exports = {
+	QUEUE: my_QUEUE
+}

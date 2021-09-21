@@ -8,7 +8,8 @@ module.exports = {
 		.setName('shuffle')
 		.setDescription('Mueve la cola... :O'),
 	async execute(interaction) {
-		let serverQueue = interaction.client.queue.get(interaction.guildId);
+		const { QUEUE } = require('../index')
+		let serverQueue = QUEUE.get(interaction.guildId);
 		if (serverQueue){
 			//Check that user is GuildMember
 			if(!interaction.member instanceof GuildMember){

@@ -17,7 +17,8 @@ module.exports = {
                 .setDescription('Lo que quieres buscar')
                 .setRequired(true)),
 	async execute(interaction) {
-		let serverQueue = interaction.client.queue.get(interaction.guildId);
+		const { QUEUE } = require('../index.js');
+		let serverQueue = QUEUE.get(interaction.guildId);
 		if (serverQueue){
 			//Check that user is GuildMember and is connected to same vc as bot.
 			if(
