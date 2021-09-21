@@ -7,7 +7,7 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 const { handleUrls } = require('../utils/url-handler.js');
 const embeds = require('../utils/embeds.js');
 const { GuildMember} = require('discord.js');
-const {Track} = require('../dist/serverQueue');
+const { Track, ServerQueue } = require('../dist/serverQueue');
 const { clientId } = require('../config.json');
 const fetchP = import('node-fetch').then(mod => mod.default);
 const fetch = (...args) => fetchP.then(fn => fn(...args));
