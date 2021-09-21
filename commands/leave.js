@@ -18,6 +18,7 @@ module.exports = {
 			/*
 				Destroying connection
 			*/
+			console.log('Running command /leave')
 			serverQueue.voiceConnection.destroy();
             interaction.client.queue.delete(interaction.guildId);
             const embed = embeds.generic('¡Nos vemos!')

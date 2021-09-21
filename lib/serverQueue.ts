@@ -12,8 +12,8 @@ import {
 } from '@discordjs/voice';
 import { promisify } from 'util';
 import { raw as ytdl } from 'youtube-dl-exec';
-import * as utils from '../utils/utility';
 import { config } from 'dotenv';
+import { safeSong } from './safeSong';
 
 config();
 const wait = promisify(setTimeout);
@@ -26,6 +26,7 @@ export class ServerQueue{
     public readonly onCountDown = false;
 
     public queue: Track[];
+	public currentSong: SongData | undefined;
 
     public prevMembers = null;
 
@@ -101,9 +102,9 @@ export class ServerQueue{
 				void this.processQueue();
 			} else if (newState.status === AudioPlayerStatus.Playing) {
 				// If the Playing state has been entered, then a new track has started playback.
-				const metadata = (newState.resource as AudioResource<Track>).metadata;
-				console.log(`Now playing ${metadata.title} by ${metadata.author}`);
-				(newState.resource as AudioResource<Track>).metadata.onStart(metadata);
+				// Metadata can't be undefined because it was obtained on song load.
+				console.log(`Now playing ${this.currentSong!.title}`);
+				(newState.resource as AudioResource<Track>).metadata.onStart(this.currentSong!);
 			}
 		});
 
@@ -130,6 +131,7 @@ export class ServerQueue{
     public stop() {
 		this.queueLock = true;
 		this.queue = [];
+		this.currentSong = undefined;
 		this.audioPlayer.stop(true);
 	}
 
@@ -143,23 +145,18 @@ export class ServerQueue{
 
         // Take the first item from the queue. This is guaranteed to exist due to the non-empty check above.
 		const nextTrack = this.queue.shift()!; // ! significa que no puede ser null
-		let info:any = await utils.getSong(nextTrack.title);
-		// In case info is null, go to next track.
 
-		try { // Attempt to read data from info
-		nextTrack.title = info.title;
-		nextTrack.author = info.author.name;
-		nextTrack.authorUrl = info.author.url;
-		nextTrack.avatar = info.author.bestAvatar.url;
-		nextTrack.thumbnail = info.bestThumbnail.url;
-		nextTrack.url = info.url;
-		} catch (err) {
-			console.log(err);
-			// If an error occurred, try the next item of the queue instead
-			nextTrack.onError(err as Error);
+		let info = await safeSong(nextTrack.title);
+		// If getting info fails, try next song
+		if (info === null) {
+			console.log( `ytsr no pudo encontrat ${nextTrack.title}`)
 			this.queueLock = false;
 			return this.processQueue();
 		}
+
+		this.currentSong = info!;
+		nextTrack.url = info!.url;
+		nextTrack.title = info!.title;
 
         try {
 			// Attempt to convert the Track into an AudioResource (i.e. start streaming the video)
@@ -180,11 +177,7 @@ export class ServerQueue{
 export interface TrackData {
 	title: string;
     url: string;
-    author: string;
-    avatar: string;
-    authorUrl: string;
-    thumbnail: string;
-	onStart: (song: Track) => void;
+	onStart: (song: SongData) => void;
 	onFinish: () => void;
 	onError: (error: Error) => void;
 }
@@ -194,21 +187,13 @@ const noop = () => {};
 export class Track implements TrackData{
     public title: string;
     public url: string;
-    public author: string;
-    public avatar: string;
-    public authorUrl: string;
-    public thumbnail: string;
-	public readonly onStart: (song: Track) => void;
+	public readonly onStart: (song: SongData) => void;
 	public readonly onFinish: () => void;
 	public readonly onError: (error: Error) => void;
 
-    private constructor({title, url, author, avatar, authorUrl, thumbnail,onStart,onFinish,onError}:TrackData) {
+    private constructor({title, url, onStart,onFinish,onError}:TrackData) {
         this.title = title;
 		this.url = url;
-        this.author = author;
-        this.avatar = avatar;
-        this.authorUrl = authorUrl;
-        this.thumbnail = thumbnail;
 		this.onStart = onStart;
 		this.onFinish = onFinish
 		this.onError = onError;
@@ -248,7 +233,7 @@ export class Track implements TrackData{
 
     public static from(title: string, methods: Pick<Track, 'onStart' | 'onFinish' | 'onError'>): Track {
 		const wrappedMethods = {
-			onStart(song: Track) {
+			onStart(song: SongData) {
 				wrappedMethods.onStart = noop;
 				methods.onStart(song);
 			},
@@ -264,13 +249,27 @@ export class Track implements TrackData{
         return new Track({
             title: title,
             url: "",
-            author: "",
-            avatar: "",
-            authorUrl: "",
-            thumbnail: "",
 			...wrappedMethods, 
         });
     }
+}
+
+export class SongData{
+	public readonly title: string;
+    public readonly url: string;
+	public readonly author: string;
+	public readonly authorUrl: string;
+    public readonly avatar: string;
+	public readonly thumbnail: string;
+
+	public constructor(title: string, url: string, author: string, authorUrl: string, avatar: string, thubmnail: string){
+		this.title = title;
+		this.url = url;
+		this.author = author;
+		this.authorUrl = authorUrl;
+		this.avatar = avatar;
+		this.thumbnail = thubmnail;
+	}
 }
 
 

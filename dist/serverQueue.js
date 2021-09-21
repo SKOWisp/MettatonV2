@@ -10,25 +10,6 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -66,12 +47,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Track = exports.ServerQueue = void 0;
+exports.SongData = exports.Track = exports.ServerQueue = void 0;
 var voice_1 = require("@discordjs/voice");
 var util_1 = require("util");
 var youtube_dl_exec_1 = require("youtube-dl-exec");
-var utils = __importStar(require("../../utils/utility"));
 var dotenv_1 = require("dotenv");
+var safeSong_1 = require("./safeSong");
 (0, dotenv_1.config)();
 var wait = (0, util_1.promisify)(setTimeout);
 var ServerQueue = /** @class */ (function () {
@@ -170,9 +151,9 @@ var ServerQueue = /** @class */ (function () {
             }
             else if (newState.status === voice_1.AudioPlayerStatus.Playing) {
                 // If the Playing state has been entered, then a new track has started playback.
-                var metadata = newState.resource.metadata;
-                console.log("Now playing " + metadata.title + " by " + metadata.author);
-                newState.resource.metadata.onStart(metadata);
+                // Metadata can't be undefined because it was obtained on song load.
+                console.log("Now playing " + _this.currentSong.title);
+                newState.resource.metadata.onStart(_this.currentSong);
             }
         });
         this.audioPlayer.on('error', function (error) {
@@ -194,6 +175,7 @@ var ServerQueue = /** @class */ (function () {
     ServerQueue.prototype.stop = function () {
         this.queueLock = true;
         this.queue = [];
+        this.currentSong = undefined;
         this.audioPlayer.stop(true);
     };
     ServerQueue.prototype.processQueue = function () {
@@ -209,25 +191,18 @@ var ServerQueue = /** @class */ (function () {
                         // Lock the queue to guarantee safe access
                         this.queueLock = true;
                         nextTrack = this.queue.shift();
-                        return [4 /*yield*/, utils.getSong(nextTrack.title)];
+                        return [4 /*yield*/, (0, safeSong_1.safeSong)(nextTrack.title)];
                     case 1:
                         info = _a.sent();
-                        // In case info is null, go to next track.
-                        try { // Attempt to read data from info
-                            nextTrack.title = info.title;
-                            nextTrack.author = info.author.name;
-                            nextTrack.authorUrl = info.author.url;
-                            nextTrack.avatar = info.author.bestAvatar.url;
-                            nextTrack.thumbnail = info.bestThumbnail.url;
-                            nextTrack.url = info.url;
-                        }
-                        catch (err) {
-                            console.log(err);
-                            // If an error occurred, try the next item of the queue instead
-                            nextTrack.onError(err);
+                        // If getting info fails, try next song
+                        if (info === null) {
+                            console.log("ytsr no pudo encontrat " + nextTrack.title);
                             this.queueLock = false;
                             return [2 /*return*/, this.processQueue()];
                         }
+                        this.currentSong = info;
+                        nextTrack.url = info.url;
+                        nextTrack.title = info.title;
                         _a.label = 2;
                     case 2:
                         _a.trys.push([2, 4, , 5]);
@@ -255,13 +230,9 @@ exports.ServerQueue = ServerQueue;
 var noop = function () { };
 var Track = /** @class */ (function () {
     function Track(_a) {
-        var title = _a.title, url = _a.url, author = _a.author, avatar = _a.avatar, authorUrl = _a.authorUrl, thumbnail = _a.thumbnail, onStart = _a.onStart, onFinish = _a.onFinish, onError = _a.onError;
+        var title = _a.title, url = _a.url, onStart = _a.onStart, onFinish = _a.onFinish, onError = _a.onError;
         this.title = title;
         this.url = url;
-        this.author = author;
-        this.avatar = avatar;
-        this.authorUrl = authorUrl;
-        this.thumbnail = thumbnail;
         this.onStart = onStart;
         this.onFinish = onFinish;
         this.onError = onError;
@@ -310,8 +281,20 @@ var Track = /** @class */ (function () {
                 methods.onError(error);
             },
         };
-        return new Track(__assign({ title: title, url: "", author: "", avatar: "", authorUrl: "", thumbnail: "" }, wrappedMethods));
+        return new Track(__assign({ title: title, url: "" }, wrappedMethods));
     };
     return Track;
 }());
 exports.Track = Track;
+var SongData = /** @class */ (function () {
+    function SongData(title, url, author, authorUrl, avatar, thubmnail) {
+        this.title = title;
+        this.url = url;
+        this.author = author;
+        this.authorUrl = authorUrl;
+        this.avatar = avatar;
+        this.thumbnail = thubmnail;
+    }
+    return SongData;
+}());
+exports.SongData = SongData;

@@ -3,7 +3,7 @@ const { GuildMember} = require('discord.js');
 var validator = require('validator');
 const embeds = require('../utils/embeds.js');
 const { maxSongs } = require('../config.json');
-const {Track} = require('../dist/lib/serverQueue');
+const {Track} = require('../dist/serverQueue');
 const fetchP = import('node-fetch').then(mod => mod.default);
 const fetch = (...args) => fetchP.then(fn => fn(...args));
 const { clientId } = require('../config.json');

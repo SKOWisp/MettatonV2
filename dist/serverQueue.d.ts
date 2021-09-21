@@ -5,6 +5,7 @@ export declare class ServerQueue {
     readonly timeoutID: null;
     readonly onCountDown = false;
     queue: Track[];
+    currentSong: SongData | undefined;
     prevMembers: null;
     readyLock: boolean;
     queueLock: boolean;
@@ -16,25 +17,26 @@ export declare class ServerQueue {
 export interface TrackData {
     title: string;
     url: string;
-    author: string;
-    avatar: string;
-    authorUrl: string;
-    thumbnail: string;
-    onStart: (song: Track) => void;
+    onStart: (song: SongData) => void;
     onFinish: () => void;
     onError: (error: Error) => void;
 }
 export declare class Track implements TrackData {
     title: string;
     url: string;
-    author: string;
-    avatar: string;
-    authorUrl: string;
-    thumbnail: string;
-    readonly onStart: (song: Track) => void;
+    readonly onStart: (song: SongData) => void;
     readonly onFinish: () => void;
     readonly onError: (error: Error) => void;
     private constructor();
     createAudioResource(): Promise<AudioResource<Track>>;
     static from(title: string, methods: Pick<Track, 'onStart' | 'onFinish' | 'onError'>): Track;
+}
+export declare class SongData {
+    readonly title: string;
+    readonly url: string;
+    readonly author: string;
+    readonly authorUrl: string;
+    readonly avatar: string;
+    readonly thumbnail: string;
+    constructor(title: string, url: string, author: string, authorUrl: string, avatar: string, thubmnail: string);
 }

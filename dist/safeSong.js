@@ -35,46 +35,49 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var ytsr = require('ytsr');
-var searchLimit = require('../config.json').searchLimit;
-var options = {
-    limit: searchLimit
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-function getSong(query) {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.safeSong = void 0;
+var ytsr_1 = __importDefault(require("ytsr"));
+var dotenv_1 = require("dotenv");
+var serverQueue_1 = require("./serverQueue");
+(0, dotenv_1.config)();
+var searchLimit = Number(process.env.SEARCH_LIMIT);
+var options = {
+    maxRetries: 4,
+    maxReconnects: 2,
+};
+function safeSong(query) {
     return __awaiter(this, void 0, void 0, function () {
-        var youtubeSearch, youtubeResult, i;
+        var ytData, ytVideo, i;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, ytsr(query, options)
-                        .catch(function (err) {
-                        console.log(err);
-                        return null;
-                    })];
+                case 0: return [4 /*yield*/, (0, ytsr_1.default)(query, { limit: searchLimit, requestOptions: { options: options } }).catch(function (err) { return console.warn(err); })];
                 case 1:
-                    youtubeSearch = _a.sent();
-                    if (youtubeSearch.items[0] === undefined || youtubeSearch === null) {
+                    ytData = _a.sent();
+                    // ytsr will return null when unable to find data.
+                    if (ytData === null)
                         return [2 /*return*/, null];
-                    }
-                    for (i = 0; i < options.limit; i++) {
-                        if (youtubeSearch.items[i].type === 'video') {
-                            youtubeResult = youtubeSearch.items[i];
+                    ytVideo = null;
+                    for (i = 0; i < searchLimit; i++) {
+                        if (ytData.items[i].type === 'video') {
+                            ytVideo = ytData.items[i];
                             break;
                         }
                     }
-                    return [2 /*return*/, youtubeResult];
+                    // Somehow none of the results is of type video....
+                    if (ytVideo === null)
+                        return [2 /*return*/, null];
+                    return [2 /*return*/, new serverQueue_1.SongData(ytVideo.title, ytVideo.url, ytVideo.author.name, ytVideo.author.url, ytVideo.author.bestAvatar.url, ytVideo.bestThumbnail.url)];
             }
         });
     });
 }
-// Shuffles array in place.
-function shuffle(a) {
-    var j, x, i;
-    for (i = a.length - 1; i > 0; i--) {
-        j = Math.floor(Math.random() * (i + 1));
-        x = a[i];
-        a[i] = a[j];
-        a[j] = x;
-    }
-    return a;
+exports.safeSong = safeSong;
+function getSong() {
+    return __awaiter(this, void 0, void 0, function () { return __generator(this, function (_a) {
+        return [2 /*return*/];
+    }); });
 }
-module.exports = { getSong: getSong, shuffle: shuffle };
