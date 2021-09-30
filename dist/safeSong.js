@@ -60,6 +60,8 @@ function safeSong(query) {
                     // ytsr will return null when unable to find data.
                     if (ytData === null)
                         return [2 /*return*/, null];
+                    if (ytData.items === undefined)
+                        return [2 /*return*/, null];
                     ytVideo = null;
                     for (i = 0; i < searchLimit; i++) {
                         if (ytData.items[i].type === 'video') {

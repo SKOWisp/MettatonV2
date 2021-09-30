@@ -45,8 +45,13 @@ module.exports = {
 function disconnectBot(guildId){
     const { QUEUE } = require('../index');
     const serverQueue = QUEUE.get(guildId);
-    serverQueue.voiceConnection.destroy();
-    const embed = embeds.generic('¡Nos vemos!');
-    serverQueue.textChannel.send({embeds: [embed]}).catch(err => console.warn(err));
+    try{
+        serverQueue.voiceConnection.destroy();
+        const embed = embeds.generic('¡Nos vemos!');
+        serverQueue.textChannel.send({embeds: [embed]}).catch(err => console.warn(err));
+    } catch (err) {
+        console.log(err);
+    }
+
     QUEUE.delete(guildId);
 }
