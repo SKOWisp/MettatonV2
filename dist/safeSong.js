@@ -58,10 +58,10 @@ function safeSong(query) {
                 case 1:
                     ytData = _a.sent();
                     // ytsr will return null when unable to find data.
-                    if (ytData === null)
+                    if (ytData === null || !ytData.items) {
+                        console.log("No pude encontrar: " + query);
                         return [2 /*return*/, null];
-                    if (!ytData.items)
-                        return [2 /*return*/, null];
+                    }
                     ytVideo = null;
                     for (i = 0; i < searchLimit; i++) {
                         if (ytData.items[i].type === 'video') {

@@ -45,6 +45,7 @@ module.exports = {
 function disconnectBot(guildId){
     const { QUEUE } = require('../index');
     const serverQueue = QUEUE.get(guildId);
+    if (!serverQueue) return;
     try{
         serverQueue.voiceConnection.destroy();
         const embed = embeds.generic('¡Nos vemos!');
@@ -52,6 +53,5 @@ function disconnectBot(guildId){
     } catch (err) {
         console.log(err);
     }
-
     QUEUE.delete(guildId);
 }

@@ -12,8 +12,10 @@ export async function safeSong(query: string): Promise<SongData | null>{
     let ytData = await ytsr(query, {limit: searchLimit, requestOptions: {options}}).catch((err) => console.warn(err));
 
     // ytsr will return null when unable to find data.
-    if (ytData === null) return null;
-    if (!ytData!.items) return null;
+    if (ytData === null || !ytData!.items) {
+      console.log(`No pude encontrar: ${query}`)
+      return null;
+    }
     
     let ytVideo: any = null;
     for (let i = 0; i < searchLimit; i++) {
@@ -33,6 +35,3 @@ export async function safeSong(query: string): Promise<SongData | null>{
         ytVideo.author.bestAvatar.url,
         ytVideo.bestThumbnail.url,)
 }
-
-
-async function getSong(){}
