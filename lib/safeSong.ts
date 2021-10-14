@@ -16,6 +16,10 @@ export async function safeSong(query: string): Promise<SongData | null>{
       console.log(`No pude encontrar: ${query}`)
       return null;
     }
+    if (!ytData!.items) {
+      console.log(`No pude encontrar: ${query}`)
+      return null;
+    }
     
     let ytVideo: any = null;
     for (let i = 0; i < searchLimit; i++) {

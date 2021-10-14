@@ -62,6 +62,10 @@ function safeSong(query) {
                         console.log("No pude encontrar: " + query);
                         return [2 /*return*/, null];
                     }
+                    if (!ytData.items) {
+                        console.log("No pude encontrar: " + query);
+                        return [2 /*return*/, null];
+                    }
                     ytVideo = null;
                     for (i = 0; i < searchLimit; i++) {
                         if (ytData.items[i].type === 'video') {
