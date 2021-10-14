@@ -19,11 +19,16 @@ module.exports = {
 			/*
 				Destroying connection
 			*/
-			console.log('Running command /leave')
-			serverQueue.voiceConnection.destroy();
-            QUEUE.delete(interaction.guildId);
-            const embed = embeds.generic('¡Nos vemos!')
-            return await interaction.reply({embeds: [embed]});
+			try{
+				console.log('Running command /leave')
+				serverQueue.voiceConnection.destroy();
+            	const embed = embeds.generic('¡Nos vemos!');
+            	await interaction.reply({embeds: [embed]});
+			} catch (err){
+				console.log(err);
+			}
+			
+			QUEUE.delete(interaction.guildId);
                 
 		} else {
 			return await interaction.reply({content: '¡Nada tocando en el servidor!', ethereal: true});
