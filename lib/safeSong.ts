@@ -12,7 +12,7 @@ export async function safeSong(query: string): Promise<SongData | null>{
     let ytData = await ytsr(query, {limit: searchLimit, requestOptions: {options}}).catch((err) => console.warn(err));
 
     // ytsr will return null when unable to find data.
-    if (ytData === null || !ytData!.items) {
+    if (ytData === null || !ytData) {
       console.log(`No pude encontrar: ${query}`)
       return null;
     }

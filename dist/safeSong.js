@@ -58,7 +58,7 @@ function safeSong(query) {
                 case 1:
                     ytData = _a.sent();
                     // ytsr will return null when unable to find data.
-                    if (ytData === null || !ytData.items) {
+                    if (ytData === null || !ytData) {
                         console.log("No pude encontrar: " + query);
                         return [2 /*return*/, null];
                     }
@@ -78,8 +78,3 @@ function safeSong(query) {
     });
 }
 exports.safeSong = safeSong;
-function getSong() {
-    return __awaiter(this, void 0, void 0, function () { return __generator(this, function (_a) {
-        return [2 /*return*/];
-    }); });
-}
