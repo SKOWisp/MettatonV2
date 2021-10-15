@@ -10,27 +10,25 @@ const options = {
 }
 export async function safeSong(query: string): Promise<SongData | null>{ 
     let ytData = await ytsr(query, {limit: searchLimit, requestOptions: {options}}).catch((err) => console.warn(err));
-
-    // ytsr will return null when unable to find data.
-    if (ytData === null || !ytData) {
-      console.log(`No pude encontrar: ${query}`)
-      return null;
-    }
-    if (!ytData!.items) {
-      console.log(`No pude encontrar: ${query}`)
+   
+    let ytVideo: any = null;
+    try{
+      for (let i = 0; i < searchLimit; i++) {
+        if (ytData!.items[i].type === 'video'){
+          ytVideo = ytData!.items[i];
+          break;
+        }
+      }
+    } catch {
+      console.log(`No pude encontrar: ${query}`);
       return null;
     }
     
-    let ytVideo: any = null;
-    for (let i = 0; i < searchLimit; i++) {
-      if (ytData!.items[i].type === 'video'){
-        ytVideo = ytData!.items[i];
-        break;
-      }
-    }
-
     // Somehow none of the results is of type video....
-    if (ytVideo === null) return null;
+    if (ytVideo === null) {
+      console.log(`No pude encontrar: ${query}`);
+      return null;
+    }
 
     return new SongData(ytVideo.title,
         ytVideo.url,

@@ -57,25 +57,24 @@ function safeSong(query) {
                 case 0: return [4 /*yield*/, (0, ytsr_1.default)(query, { limit: searchLimit, requestOptions: { options: options } }).catch(function (err) { return console.warn(err); })];
                 case 1:
                     ytData = _a.sent();
-                    // ytsr will return null when unable to find data.
-                    if (ytData === null || !ytData) {
-                        console.log("No pude encontrar: " + query);
-                        return [2 /*return*/, null];
-                    }
-                    if (!ytData.items) {
-                        console.log("No pude encontrar: " + query);
-                        return [2 /*return*/, null];
-                    }
                     ytVideo = null;
-                    for (i = 0; i < searchLimit; i++) {
-                        if (ytData.items[i].type === 'video') {
-                            ytVideo = ytData.items[i];
-                            break;
+                    try {
+                        for (i = 0; i < searchLimit; i++) {
+                            if (ytData.items[i].type === 'video') {
+                                ytVideo = ytData.items[i];
+                                break;
+                            }
                         }
                     }
-                    // Somehow none of the results is of type video....
-                    if (ytVideo === null)
+                    catch (_b) {
+                        console.log("No pude encontrar: " + query);
                         return [2 /*return*/, null];
+                    }
+                    // Somehow none of the results is of type video....
+                    if (ytVideo === null) {
+                        console.log("No pude encontrar: " + query);
+                        return [2 /*return*/, null];
+                    }
                     return [2 /*return*/, new serverQueue_1.SongData(ytVideo.title, ytVideo.url, ytVideo.author.name, ytVideo.author.url, ytVideo.author.bestAvatar.url, ytVideo.bestThumbnail.url)];
             }
         });
