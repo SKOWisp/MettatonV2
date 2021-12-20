@@ -18,7 +18,7 @@ module.exports = {
 			if(
 			!interaction.member instanceof GuildMember || 
 			!(interaction.member.voice.channel.id === serverQueue.voiceConnection.joinConfig.channelId)){
-				return await interaction.reply({content: '¡Conéctate a la sala de voz donde estoy!', ethereal: true});
+				return await interaction.reply({content: '¡Conéctate a la sala de voz donde estoy!', ephemeral: true});
 			}
 			/*
 				Skipping songs
@@ -34,7 +34,7 @@ module.exports = {
             }
             
             if (skips <= 0 || skips > serverQueue.queue.length){
-                return await interaction.reply({content: 'Algo hiciste mal...', ethereal: true});
+                return await interaction.reply({content: 'Algo hiciste mal...', ephemeral: true});
             }
             
             const newArray = serverQueue.queue.slice(skips - 1);
@@ -43,7 +43,7 @@ module.exports = {
             const embed = embeds.generic(`Saltando ${skips} cancion(es).`);
             return await interaction.reply({embeds: [embed]});
 		} else {
-			return await interaction.reply({content: '¡Nada tocando en el servidor!', ethereal: true});
+			return await interaction.reply({content: '¡Nada tocando en el servidor!', ephemeral: true});
 		}
 	},
 };

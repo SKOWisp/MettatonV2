@@ -13,7 +13,7 @@ module.exports = {
 		if (serverQueue){
 			//Check that user is GuildMember
 			if(!interaction.member instanceof GuildMember){
-				return await interaction.reply({content: 'Me parece que eres el impostor...', ethereal: true});
+				return await interaction.reply({content: 'Me parece que eres el impostor...', ephemeral: true});
 			}
 			/*
 				Shuffle songs
@@ -25,7 +25,7 @@ module.exports = {
             const embed = embeds.generic('Se ha mezclado la cola.')
             return await interaction.reply({embeds: [embed]});
 		} else {
-            return await interaction.reply({content: '¡Nada tocando en el servidor!', ethereal: true});
+            return await interaction.reply({content: '¡Nada tocando en el servidor!', ephemeral: true});
 		}
 	},
 };

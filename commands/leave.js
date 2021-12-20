@@ -14,7 +14,7 @@ module.exports = {
 			if(
 			!interaction.member instanceof GuildMember || 
 			!(interaction.member.voice.channel.id === serverQueue.voiceConnection.joinConfig.channelId)){
-				return await interaction.reply({content: '¡Conéctate a la sala de voz donde estoy!', ethereal: true});
+				return await interaction.reply({content: '¡Conéctate a la sala de voz donde estoy!', ephemeral: true});
 			}
 			/*
 				Destroying connection
@@ -31,7 +31,7 @@ module.exports = {
 			QUEUE.delete(interaction.guildId);
                 
 		} else {
-			return await interaction.reply({content: '¡Nada tocando en el servidor!', ethereal: true});
+			return await interaction.reply({content: '¡Nada tocando en el servidor!', ephemeral: true});
 		}
 	},
 };

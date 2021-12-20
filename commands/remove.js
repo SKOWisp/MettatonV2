@@ -18,7 +18,7 @@ module.exports = {
 			if(
 			!interaction.member instanceof GuildMember || 
 			!(interaction.member.voice.channel.id === serverQueue.voiceConnection.joinConfig.channelId)){
-				return await interaction.reply({content: '¡Conéctate a la sala de voz donde estoy!', ethereal: true});
+				return await interaction.reply({content: '¡Conéctate a la sala de voz donde estoy!', ephemeral: true});
 			}
 			/*
 				Removing song from query
@@ -31,13 +31,13 @@ module.exports = {
             serverQueue.queue = serverQueue.queue.filter(item => item.title !== query);
 
 			if (serverQueue.queue.length === prevQueueLength) {
-				return await interaction.reply({content: `${query} no está en /queue. ¿Está bien escrito?`, ethereal: true});	
+				return await interaction.reply({content: `${query} no está en /queue. ¿Está bien escrito?`, ephemeral: true});	
 			  } else {
 				const embed = embeds.generic(`${query} ha sido removida de la cola.`);
-				return await interaction.reply({embeds: [embed], ethereal: true});
+				return await interaction.reply({embeds: [embed], ephemeral: true});
 			  }
 		} else {
-			return await interaction.reply({content: '¡Nada tocando en el servidor!', ethereal: true});
+			return await interaction.reply({content: '¡Nada tocando en el servidor!', ephemeral: true});
 		}
 	},
 };

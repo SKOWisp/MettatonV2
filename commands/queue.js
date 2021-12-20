@@ -11,7 +11,7 @@ module.exports = {
 		if (serverQueue){
 			//Check that user is GuildMember
 			if(!interaction.member instanceof GuildMember){
-				return await interaction.reply({content: 'Me parece que eres el impostor...', ethereal: true});
+				return await interaction.reply({content: 'Me parece que eres el impostor...', ephemeral: true});
 			}
 			/*
 				Printing queue
@@ -34,12 +34,12 @@ module.exports = {
                 .setTitle("Canciones en cola: ")
                 .setDescription(description);
 
-            return await interaction.reply({embeds: [embed], ethereal: true});
+            return await interaction.reply({embeds: [embed], ephemeral: true});
 		} else {
             const embed = new MessageEmbed()
                 .setColor("29d1ea")
                 .setDescription("No hay nada en cola. Usa /play para agregar más canciones.");
-			return await interaction.reply({embeds: [embed], ethereal: true});
+			return await interaction.reply({embeds: [embed], ephemeral: true});
 		}
 	},
 };

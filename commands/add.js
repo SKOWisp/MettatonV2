@@ -24,7 +24,7 @@ module.exports = {
 			if(
 			!interaction.member instanceof GuildMember || 
 			!(interaction.member.voice.channel.id === serverQueue.voiceConnection.joinConfig.channelId)){
-				return await interaction.reply({content: '¡Conéctate a la sala de voz donde estoy!', ethereal: true});
+				return await interaction.reply({content: '¡Conéctate a la sala de voz donde estoy!', ephemeral: true});
 			}
 			/*
 				Adding query to serverQueue
@@ -33,7 +33,7 @@ module.exports = {
 			let query = interaction.options.getString('canción');
 			query.trim();
 			//We only want this command to handle single songs.
-			if (validator.isURL(query)) return await interaction.reply({content: '¡Este comando no acepta enlaces!', ethereal: true});
+			if (validator.isURL(query)) return await interaction.reply({content: '¡Este comando no acepta enlaces!', ephemeral: true});
 
 			if (serverQueue.queue.length < maxSongs + 1) {
 				let track = createTrack(query,interaction);
@@ -42,10 +42,10 @@ module.exports = {
 				const embed = embeds.generic(`${query} ha sido añadida a la cola.`);
 				return await interaction.reply({embeds: [embed]});
 			  } else {
-				return await interaction.reply({content: `¡Sólo puede haber hasta ${config.maxSongs} canciones en la cola!`, ethereal: true});
+				return await interaction.reply({content: `¡Sólo puede haber hasta ${config.maxSongs} canciones en la cola!`, ephemeral: true});
 			  }
 		} else {
-			return await interaction.reply({content: '¡Nada tocando en el servidor!', ethereal: true});
+			return await interaction.reply({content: '¡Nada tocando en el servidor!', ephemeral: true});
 		}
 	},
 };
