@@ -1,7 +1,10 @@
 var validator = require('validator');
 var URL = require('url-parse');
 const embeds = require('./embeds.js');
-const { getTracks } = require('spotify-url-info')
+
+const fetch = require('isomorphic-unfetch')
+const { getData, getPreview, getTracks, getDetails } = require('spotify-url-info')(fetch)
+
 const ytdl = require('ytdl-core');
 const ytpl = require('ytpl');
 
@@ -56,7 +59,8 @@ async function handleUrls(url){ //Handles urls and retruns array with titles + a
                     });
                     return titles;
                 })
-                .catch(() => {
+                .catch((err) => {
+                    console.error(err);
                     return embeds.generic('Algo salió mal al buscar las canciones de Spotify. Prueba otro enlace.');
                 });
             return tracks;
