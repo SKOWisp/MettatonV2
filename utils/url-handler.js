@@ -3,7 +3,8 @@ var URL = require('url-parse');
 const embeds = require('./embeds.js');
 
 const fetch = require('isomorphic-unfetch')
-const { getData, getPreview, getTracks, getDetails } = require('spotify-url-info')(fetch)
+const { getTracks } = require('spotify-url-info')(fetch)
+// const { getData, getPreview, getTracks, getDetails } = require('spotify-url-info')(fetch)
 
 const ytdl = require('ytdl-core');
 const ytpl = require('ytpl');
@@ -49,13 +50,11 @@ async function handleUrls(url){ //Handles urls and retruns array with titles + a
                 return embeds.generic('El enlace de youtube parece defectuoso. Intenta con otro.')
             }
         } else { // Handles Spotify playlists and tracks
+            // If shit breaks, it's probably got something to do with spotify-url-info
             let tracks = await getTracks(url)
                 .then(data => {
                     let titles = data.map(track => {
-                    let artists = track.artists.map(artist => {
-                            return artist.name;
-                        }).join(" ");
-                    return track.name + " " + artists;
+                        return track.title + " " + track.subtitle;
                     });
                     return titles;
                 })
@@ -63,6 +62,7 @@ async function handleUrls(url){ //Handles urls and retruns array with titles + a
                     console.error(err);
                     return embeds.generic('Algo salió mal al buscar las canciones de Spotify. Prueba otro enlace.');
                 });
+
             return tracks;
         }
         
