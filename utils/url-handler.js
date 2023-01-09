@@ -53,10 +53,15 @@ async function handleUrls(url){ //Handles urls and retruns array with titles + a
             // If shit breaks, it's probably got something to do with spotify-url-info
             let tracks = await getTracks(url)
                 .then(data => {
+
                     let titles = data.map(track => {
-                        return track.title + " " + track.subtitle;
+                       return track.name + " " + track.artist;
                     });
+                    
+                    // Should always return a list
+                    // Modify if testing needed
                     return titles;
+                    // return ['Heartache - Undertale'];
                 })
                 .catch((err) => {
                     console.error(err);
